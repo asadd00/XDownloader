@@ -6,9 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
-import com.android.downloadanything.file_loader.FileLoader
-import com.android.downloadanything.file_loader.FileLoader1
-import com.android.downloadanything.image_loader.ImageLoader
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,13 +24,7 @@ class MainActivity : AppCompatActivity() {
         iv_preview = findViewById(R.id.iv_preview)
         b_getfile = findViewById(R.id.b_getfile)
 
-        // loader = ImageLoader(baseContext)
 
-        FileLoader.with(baseContext).setCacheSize(8).load(iv_preview, "https://amp.businessinsider.com/images/592f4169b74af41b008b5977-750-563.jpg")
-
-        b_getfile.setOnClickListener { view ->
-                FileLoader1.with(baseContext).load("http://www.africau.edu/images/default/sample.pdf")
-        }
     }
 
     fun askPermissions(){
