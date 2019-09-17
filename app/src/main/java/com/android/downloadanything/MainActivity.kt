@@ -1,12 +1,15 @@
 package com.android.downloadanything
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
-import com.android.downloadx.image_loader.ImageLoader
+import androidx.core.content.ContextCompat
+import com.android.FileLoader
+import com.android.FileTypes
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,12 +28,24 @@ class MainActivity : AppCompatActivity() {
         iv_preview = findViewById(R.id.iv_preview)
         b_getfile = findViewById(R.id.b_getfile)
 
-
+        b_getfile.setOnClickListener { view ->
+            if(!hasRequiredPermissions()){
+                askPermissions()
+            }
+            else
+                FileLoader.with(baseContext)
+                    .download("http://www.africau.edu/images/default/sample.pdf", FileTypes.TYPE_PDF)
+        }
     }
 
     fun askPermissions(){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
         }
+    }
+
+    fun hasRequiredPermissions(): Boolean{
+        return ContextCompat.checkSelfPermission(baseContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(baseContext, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 }
