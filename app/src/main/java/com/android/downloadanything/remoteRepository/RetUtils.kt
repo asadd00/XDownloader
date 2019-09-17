@@ -1,0 +1,11 @@
+package com.android.downloadanything.remoteRepository
+
+class RetUtils private constructor() {
+
+    companion object{
+        fun getAPIService(): RetAPI {
+            return RetClient.getClient().create(RetAPI::class.java)
+        }
+    }
+
+}
