@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
+import com.android.downloadx.image_loader.ImageLoader
 
 class MainActivity : AppCompatActivity() {
 
