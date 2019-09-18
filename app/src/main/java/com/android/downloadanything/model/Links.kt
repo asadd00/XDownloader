@@ -1,3 +1,3 @@
 package com.android.downloadanything.model
 
-class Links (self:String, html:String, photos:String, likes:String)
+class Links (var self:String, var html:String, var photos:String, var likes:String)

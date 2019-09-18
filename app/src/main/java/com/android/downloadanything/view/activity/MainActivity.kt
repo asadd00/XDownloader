@@ -6,12 +6,8 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.android.FileLoader
-import com.android.FileTypes
 import com.android.downloadanything.R
 import com.android.downloadanything.model.Feed
 import com.android.downloadanything.remoteRepository.RetUtils
@@ -38,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         feedList = ArrayList()
 
         rv_list = findViewById(R.id.rv_list)
-        adapter = FeedsAdapter(baseContext, feedList)
+        adapter = FeedsAdapter(this@MainActivity, feedList)
         rv_list.adapter = adapter
 
         makeGetDataRequest()

@@ -1,4 +1,4 @@
-package com.android
+package com.android.model
 
 enum class FileTypes {
     TYPE_IMAGE,

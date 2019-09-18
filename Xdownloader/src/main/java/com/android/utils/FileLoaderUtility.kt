@@ -1,16 +1,18 @@
-package com.android
+package com.android.utils
 
 import android.content.Context
 import android.os.Process
 import android.util.Log
+import com.android.model.FileTypes
+import com.android.model.FileModel
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.ThreadFactory
 
 
-object Utility {
-    private val tag = "ttt Utility"
+object FileLoaderUtility {
+    private val tag = "ttt FileLoaderUtility"
     internal class FileThreadFactory : ThreadFactory {
         override fun newThread(runnable: Runnable): Thread {
             return Thread(runnable).apply {

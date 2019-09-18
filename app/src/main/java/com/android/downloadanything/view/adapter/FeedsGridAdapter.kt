@@ -33,12 +33,8 @@ class FeedsGridAdapter(var context: Context, private var feedList: ArrayList<Fee
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var iv_preview: ImageView
-        var tv_likes: TextView
+        var iv_preview: ImageView = itemView.findViewById(R.id.iv_preivew)
+        var tv_likes: TextView = itemView.findViewById(R.id.tv_likes)
 
-        init {
-            iv_preview = itemView.findViewById(R.id.iv_preivew)
-            tv_likes = itemView.findViewById(R.id.tv_likes)
-        }
     }
 }

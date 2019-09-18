@@ -1,13 +1,16 @@
-package com.android
+package com.android.lib
 
 import android.content.Context
 import android.util.Log
 import android.util.LruCache
+import com.android.model.FileModel
+import com.android.model.FileTypes
+import com.android.utils.FileLoaderUtility
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class FileLoader (val context: Context)  {
+class FileLoader internal constructor(private val context: Context)  {
     private val tag = "ttt FileLoader"
     private lateinit var fileType: FileTypes
     private var fileName = ""
@@ -23,23 +26,19 @@ class FileLoader (val context: Context)  {
             }
         }
 
-        executorService = Executors.newFixedThreadPool(5, Utility.FileThreadFactory())
+        executorService = Executors.newFixedThreadPool(5, FileLoaderUtility.FileThreadFactory())
     }
 
     companion object {
         private var INSTANCE: FileLoader? = null
+    }
 
-        @Synchronized
-        fun with(context: Context): FileLoader {
-
-            require(context != null) {
-                "FileLoader:with - Context should not be null."
-            }
-
-            return INSTANCE
-                ?: FileLoader(context).also {
-                INSTANCE = it
-            }
+    @Synchronized
+    internal fun getInstance(): FileLoader{
+        return INSTANCE ?: FileLoader(
+            context
+        ).also {
+            INSTANCE = it
         }
     }
 
@@ -76,20 +75,28 @@ class FileLoader (val context: Context)  {
 
         val file = checkFileInCache(fileUrl)
         file?.let {
-            Utility.saveFile(context, file, FileModel(fileUrl, fileType, fileName))
+            FileLoaderUtility.saveFile(context, file,
+                FileModel(fileUrl, fileType, fileName)
+            )
         } ?: run {
-            executorService.submit(FileLoadingThread(FileModel(fileUrl, fileType, fileName)))
+            executorService.submit(FileLoadingThread(
+                FileModel(
+                    fileUrl,
+                    fileType,
+                    fileName
+                )
+            ))
         }
     }
 
     @Synchronized
     private fun checkFileInCache(fileUrl: String): File? = memoryCache.get(fileUrl)
 
-    inner class FileLoadingThread(private var fileModel: FileModel) : Runnable {
+    internal inner class FileLoadingThread(private var fileModel: FileModel) : Runnable {
 
         override fun run() {
             Log.d(tag, "FileLoadingThread")
-            val filepath = Utility.downloadFileFromURL(context, fileModel)
+            val filepath = FileLoaderUtility.downloadFileFromURL(context, fileModel)
 
             if(!isCacheEnabled) return
             memoryCache.put(fileModel.fileUrl, File(filepath!!))
