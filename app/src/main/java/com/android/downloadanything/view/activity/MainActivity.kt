@@ -1,4 +1,4 @@
-package com.android.downloadanything.view
+package com.android.downloadanything.view.activity
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -9,21 +9,23 @@ import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.android.FileLoader
 import com.android.FileTypes
 import com.android.downloadanything.R
 import com.android.downloadanything.model.Feed
 import com.android.downloadanything.remoteRepository.RetUtils
+import com.android.downloadanything.view.adapter.FeedsAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
     val tag = "ttt MainActivity"
-    lateinit var iv_preview: ImageView
-    lateinit var b_getfile: Button
 
     lateinit var feedList: ArrayList<Feed>
+    lateinit var adapter: FeedsAdapter
+    lateinit var rv_list: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,20 +35,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun init(){
-        askPermissions()
-        iv_preview = findViewById(R.id.iv_preview)
-        b_getfile = findViewById(R.id.b_getfile)
-
-        b_getfile.setOnClickListener { view ->
-            if(!hasRequiredPermissions()){
-                askPermissions()
-            }
-            else
-                FileLoader.with(baseContext)
-                    .download("http://www.africau.edu/images/default/sample.pdf", FileTypes.TYPE_PDF)
-        }
-
         feedList = ArrayList()
+
+        rv_list = findViewById(R.id.rv_list)
+        adapter = FeedsAdapter(baseContext, feedList)
+        rv_list.adapter = adapter
+
         makeGetDataRequest()
     }
 
@@ -74,6 +68,7 @@ class MainActivity : AppCompatActivity() {
                 if(response.isSuccessful){
                     feedList.addAll(response.body() as Collection<Feed>)
                     Log.d(tag, "len: ${feedList.size}")
+                    adapter.setListData(feedList)
                 }
             }
 

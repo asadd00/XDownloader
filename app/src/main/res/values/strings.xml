@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Download Anything</string>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
+    <string name="visit_site">Visit Site</string>
+    <string name="likes">%s likes</string>
 </resources>

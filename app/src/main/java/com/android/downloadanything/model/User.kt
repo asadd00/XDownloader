@@ -1,6 +1,6 @@
 package com.android.downloadanything.model
 
-class User(id:String, username:String, name:String, profile_image:ProfileImage, links:Links){
+class User(var id:String, var username:String, var name:String, var profile_image:ProfileImage, var links:Links){
 
 
     inner class ProfileImage(small:String, medium:String, large:String)

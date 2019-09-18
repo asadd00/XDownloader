@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="@dimen/mg_s"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_preivew"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/preview_img_h"
+                android:foreground="@drawable/gradient_black"
+                android:scaleType="centerCrop"
+                android:src="@drawable/image_placeholder"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageView7"
+                android:layout_width="@dimen/icon_sm"
+                android:layout_height="@dimen/icon_sm"
+                android:layout_marginEnd="@dimen/mg_s"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_likes"
+                app:layout_constraintEnd_toStartOf="@+id/tv_likes"
+                app:layout_constraintTop_toTopOf="@+id/tv_likes"
+                app:srcCompat="@drawable/heart" />
+
+            <TextView
+                android:id="@+id/tv_likes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/mg_m"
+                android:layout_marginBottom="@dimen/mg_m"
+                android:text="10 Likes"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_preivew"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <com.mikhaellopez.circularimageview.CircularImageView
+        android:id="@+id/iv_profileIcon"
+        android:layout_width="@dimen/list_profile_img"
+        android:layout_height="@dimen/list_profile_img"
+        android:layout_marginStart="@dimen/mg_m"
+        android:layout_marginTop="@dimen/mg_sl"
+        android:src="@drawable/profile_placeholder"
+        app:civ_border_width="0dp"
+        app:layout_constraintStart_toStartOf="@+id/cardView"
+        app:layout_constraintTop_toBottomOf="@+id/cardView" />
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/mg_sl"
+        android:layout_marginEnd="@dimen/mg_sl"
+        android:text="Name"
+        android:textColor="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_profileIcon"
+        app:layout_constraintEnd_toStartOf="@+id/tv_visitSite"
+        app:layout_constraintStart_toEndOf="@+id/iv_profileIcon"
+        app:layout_constraintTop_toTopOf="@+id/iv_profileIcon" />
+
+    <TextView
+        android:id="@+id/tv_visitSite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:paddingStart="@dimen/mg_sl"
+        android:paddingTop="@dimen/mg_s"
+        android:paddingEnd="@dimen/mg_sl"
+        android:paddingBottom="@dimen/mg_s"
+        android:text="@string/visit_site"
+        android:textColor="@android:color/white"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_profileIcon"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/mg_m"
+        android:layout_marginBottom="8dp"
+        android:background="@color/dark_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_visitSite" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
