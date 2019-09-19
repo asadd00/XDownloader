@@ -48,11 +48,13 @@ class ImageLoader internal constructor(private val context: Context)  {
 
     @Synchronized
     internal fun getInstance(): ImageLoader{
-        return INSTANCE ?: ImageLoader(
-            context
-        ).also {
-            INSTANCE = it
-        }
+//        return INSTANCE ?: ImageLoader(
+//            context
+//        ).also {
+//            INSTANCE = it
+//        }
+        INSTANCE = ImageLoader(context)
+        return INSTANCE!!
     }
 
     fun load(imageView: ImageView, imageUrl: String) {

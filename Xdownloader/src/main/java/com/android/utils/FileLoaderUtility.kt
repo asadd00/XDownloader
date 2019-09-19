@@ -3,6 +3,7 @@ package com.android.utils
 import android.content.Context
 import android.os.Process
 import android.util.Log
+import com.android.lib.FileLoader
 import com.android.model.FileTypes
 import com.android.model.FileModel
 import java.io.*
@@ -13,6 +14,8 @@ import java.util.concurrent.ThreadFactory
 
 object FileLoaderUtility {
     private val tag = "ttt FileLoaderUtility"
+    private var onDownloadResultListener: FileLoader.OnDownloadResultListener? = null
+
     internal class FileThreadFactory : ThreadFactory {
         override fun newThread(runnable: Runnable): Thread {
             return Thread(runnable).apply {
@@ -22,22 +25,27 @@ object FileLoaderUtility {
         }
     }
 
-    fun downloadFileFromURL(context: Context, fileModel: FileModel): String? {
-        Log.d(tag, "downloadFileFromURL")
+    fun downloadFileFromURL(context: Context, fileModel: FileModel,
+                            onDownloadResultListener: FileLoader.OnDownloadResultListener?): String? {
+        this.onDownloadResultListener = onDownloadResultListener
         val url = URL(fileModel.fileUrl)
         val urlConnection: HttpURLConnection = url.openConnection() as HttpURLConnection
-        val responseCode =urlConnection.responseCode
+        val responseCode = urlConnection.responseCode
         Log.d(tag, "responseCode: $responseCode")
+        if(onDownloadResultListener!= null && (responseCode < 200 || responseCode >= 300)){
+            onDownloadResultListener.onError("Connection error!", responseCode)
+            return ""
+        }
+
         val inputStream = BufferedInputStream(urlConnection.inputStream)
 
         return saveFile(context, inputStream, fileModel)
     }
 
-    fun saveFile(context: Context, file: File, fileModel: FileModel): String{
-        Log.d(tag, "saveFile")
-        Log.d(tag, "len: " + file.length())
-        Log.d(tag, "path: " + context.getExternalFilesDir(null)?.path)
+    fun saveFile(context: Context, file: File, fileModel: FileModel,
+                 onDownloadResultListener: FileLoader.OnDownloadResultListener?): String{
 
+        Log.d(tag, "path: " + context.getExternalFilesDir(null)?.path)
 
         val filetosave = File(context.getExternalFilesDir(null)?.path, fileModel.fileName)
         filetosave.parentFile.createNewFile()
@@ -57,6 +65,7 @@ object FileLoaderUtility {
                 }
 
                 output.flush()
+                onDownloadResultListener?.onSuccess(filetosave.path)
             }
         } finally {
             in_stream.close()
@@ -73,7 +82,6 @@ object FileLoaderUtility {
     }
 
     fun saveFile(context: Context, inputStream: BufferedInputStream, fileModel: FileModel): String{
-        Log.d(tag, "saveFile")
         var ext = ".file"
 
         when {
@@ -101,6 +109,7 @@ object FileLoaderUtility {
                 }
 
                 output.flush()
+                onDownloadResultListener?.onSuccess(filetosave.path)
             }
         } finally {
             inputStream.close()

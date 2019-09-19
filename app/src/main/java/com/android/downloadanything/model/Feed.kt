@@ -1,5 +1,7 @@
 package com.android.downloadanything.model
 
+import java.io.Serializable
+
 class Feed(
     var id: String,
     var created_at: String,
@@ -13,9 +15,10 @@ class Feed(
     var urls: Urls,
     var categories: ArrayList<Category>,
     var links: Links
-) {
 
-    inner class Urls(var raw:String, var full:String, var regular:String, var small:String, var thumb:String)
+) :Serializable {
 
-    inner class CurrentUserCollections()
+    inner class Urls(var raw:String, var full:String, var regular:String, var small:String, var thumb:String) : Serializable
+
+    inner class CurrentUserCollections() : Serializable
 }

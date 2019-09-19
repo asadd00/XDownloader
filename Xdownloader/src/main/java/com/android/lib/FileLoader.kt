@@ -15,6 +15,7 @@ class FileLoader internal constructor(private val context: Context)  {
     private lateinit var fileType: FileTypes
     private var fileName = ""
     private var isCacheEnabled = false
+    private var onDownloadResultListener: OnDownloadResultListener? = null
     private val executorService: ExecutorService
     private var maxCacheSize: Int = (Runtime.getRuntime().maxMemory() / 1024).toInt()/8
     private val memoryCache: LruCache<String, File>
@@ -35,11 +36,14 @@ class FileLoader internal constructor(private val context: Context)  {
 
     @Synchronized
     internal fun getInstance(): FileLoader{
-        return INSTANCE ?: FileLoader(
-            context
-        ).also {
-            INSTANCE = it
-        }
+//        return INSTANCE ?: FileLoader(
+//            context
+//        ).also {
+//            INSTANCE = it
+//        }
+
+        INSTANCE = FileLoader(context)
+        return INSTANCE!!
     }
 
     fun setCacheSize(cacheSizeInMB: Int): FileLoader {
@@ -76,7 +80,8 @@ class FileLoader internal constructor(private val context: Context)  {
         val file = checkFileInCache(fileUrl)
         file?.let {
             FileLoaderUtility.saveFile(context, file,
-                FileModel(fileUrl, fileType, fileName)
+                FileModel(fileUrl, fileType, fileName),
+                onDownloadResultListener
             )
         } ?: run {
             executorService.submit(FileLoadingThread(
@@ -96,11 +101,21 @@ class FileLoader internal constructor(private val context: Context)  {
 
         override fun run() {
             Log.d(tag, "FileLoadingThread")
-            val filepath = FileLoaderUtility.downloadFileFromURL(context, fileModel)
+            val filepath = FileLoaderUtility.downloadFileFromURL(context, fileModel, onDownloadResultListener)
 
             if(!isCacheEnabled) return
             memoryCache.put(fileModel.fileUrl, File(filepath!!))
 
         }
+    }
+
+    interface OnDownloadResultListener{
+        fun onSuccess(filePath: String)
+        fun onError(error:String = "unknown error", errorCode:Int = 0)
+    }
+
+    fun setOnDownloadResultListener(onDownloadResultListener: OnDownloadResultListener): FileLoader{
+        this.onDownloadResultListener = onDownloadResultListener
+        return INSTANCE!!
     }
 }

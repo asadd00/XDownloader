@@ -15,6 +15,8 @@ import com.android.main.Xdownloader
 
 class FeedsAdapter(var context: Activity, private var feedList: ArrayList<Feed>): RecyclerView.Adapter<FeedsAdapter.ViewHolder>() {
 
+    lateinit var onItemClickListener: OnItemClickListener
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_feed, parent, false)
         return ViewHolder(view)
@@ -54,6 +56,21 @@ class FeedsAdapter(var context: Activity, private var feedList: ArrayList<Feed>)
                 intent.data = Uri.parse(feedList[layoutPosition].links.html)
                 context.startActivity(intent)
             }
+
+            itemView.setOnClickListener{
+                onItemClickListener.onItemClicked(layoutPosition)
+            }
+
+            iv_profileIcon.setOnClickListener{
+                onItemClickListener.onUserImageClicked(layoutPosition)
+            }
         }
+
     }
+
+    interface OnItemClickListener{
+        fun onItemClicked(position: Int)
+        fun onUserImageClicked(position: Int)
+    }
+
 }

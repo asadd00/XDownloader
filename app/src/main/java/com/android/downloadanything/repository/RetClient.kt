@@ -1,4 +1,4 @@
-package com.android.downloadanything.remoteRepository
+package com.android.downloadanything.repository
 
 import com.android.downloadanything.utils.Defaults
 import okhttp3.OkHttpClient

@@ -1,4 +1,4 @@
-package com.android.downloadanything.remoteRepository
+package com.android.downloadanything.repository
 
 class RetUtils private constructor() {
 

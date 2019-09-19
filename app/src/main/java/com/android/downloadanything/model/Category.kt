@@ -1,3 +1,5 @@
 package com.android.downloadanything.model
 
-class Category(id:String, title:String, photo_count:String, links:Links)
+import java.io.Serializable
+
+class Category(var id:String, var title:String, var photo_count:String, var links:Links) : Serializable
