@@ -1,10 +1,10 @@
-package com.android.downloadanything.file_loader
+package com.android.utils
 
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat
 import android.graphics.BitmapFactory
 import android.os.Process
-import com.android.downloadanything.image_loader.ImageLoader
+import com.android.lib.ImageLoader
 import java.io.BufferedInputStream
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -12,13 +12,13 @@ import java.net.URL
 import java.util.concurrent.ThreadFactory
 
 
-object FilesUtils {
+object ImageLoaderUtility {
 
     // Thread Factory to set Thread priority to Background
     internal class ImageThreadFactory : ThreadFactory {
         override fun newThread(runnable: Runnable): Thread {
             return Thread(runnable).apply {
-                name = "ImageLoader Thread"
+                name = "ImageLoaderUtility Thread"
                 priority = Process.THREAD_PRIORITY_BACKGROUND
             }
         }
@@ -28,11 +28,10 @@ object FilesUtils {
         val url = URL(imageUrl)
         val inputStream = BufferedInputStream(url.openConnection().getInputStream())
 
-        // Scale Bitmap to Screen Size to store in Cache
         return scaleBitmap(
             inputStream,
-            FileLoader.screenWidth,
-            FileLoader.screenHeight
+            ImageLoader.screenWidth,
+            ImageLoader.screenHeight
         )
     }
 
@@ -55,8 +54,7 @@ object FilesUtils {
             inJustDecodeBounds = true
             BitmapFactory.decodeStream(inputStream, null, this)
 
-            inSampleSize =
-                calculateInSampleSize(this, width, height)
+            inSampleSize = calculateInSampleSize(this, width, height)
 
             inJustDecodeBounds = false
             inputStream.reset()
@@ -64,7 +62,6 @@ object FilesUtils {
         }
     }
 
-    // From Developer Site
     private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
 
         val (height: Int, width: Int) = options.run { outHeight to outWidth }

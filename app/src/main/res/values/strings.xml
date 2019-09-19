@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Download Anything</string>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
+    <string name="visit_site">Visit Site</string>
+    <string name="likes">%s likes</string>
+    <string name="genres"><b>Genres: </b>%s</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
