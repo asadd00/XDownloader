@@ -31,10 +31,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/mg_m"
+        android:layout_marginEnd="@dimen/mg_m"
         android:text=""
         android:textColor="@android:color/white"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/iv_profileIcon"
+        app:layout_constraintEnd_toStartOf="@+id/iv_download"
         app:layout_constraintStart_toEndOf="@+id/iv_profileIcon"
         app:layout_constraintTop_toTopOf="@+id/iv_profileIcon" />
 

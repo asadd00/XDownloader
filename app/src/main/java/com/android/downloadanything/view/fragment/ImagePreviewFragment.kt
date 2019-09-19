@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 
 import com.android.downloadanything.R
 import com.android.downloadanything.model.Category
@@ -66,11 +67,15 @@ class ImagePreviewFragment : Fragment() {
                         .setFileName("$name-${System.currentTimeMillis()}")
                         .setOnDownloadResultListener(object : FileLoader.OnDownloadResultListener {
                             override fun onSuccess(filePath: String) {
-                                Log.d(tag, "onSuccess: $filePath")
+                                activity?.runOnUiThread{
+                                    Toast.makeText(context, String.format("File downloaded at: %s", filePath), Toast.LENGTH_LONG).show()
+                                }
                             }
 
                             override fun onError(error: String, errorCode:Int) {
-                                Log.d(tag, "onError: $errorCode-$error")
+                                activity?.runOnUiThread{
+                                    Toast.makeText(context, String.format("File downloading error. ERROR_CODE_%s", errorCode), Toast.LENGTH_SHORT).show()
+                                }
                             }
                         })
                         .download(imageUrl, FileTypes.TYPE_IMAGE)
