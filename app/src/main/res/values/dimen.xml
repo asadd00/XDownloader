@@ -9,7 +9,7 @@
     <dimen name="preview_img_h">250dp</dimen>
     <dimen name="preview_grid_img_h">160dp</dimen>
     <dimen name="list_profile_img">36dp</dimen>
-    <dimen name="icon_sm">24dp</dimen>
+    <dimen name="icon_sm">20dp</dimen>
     <dimen name="user_gallery_h">120dp</dimen>
 
     <dimen name="profile_preview">100dp</dimen>

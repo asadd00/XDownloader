@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.android.downloadanything.R
 import com.android.downloadanything.model.Feed
+import com.android.main.Xdownloader
 
 class FeedsGridAdapter(var context: Context, private var feedList: ArrayList<Feed>): RecyclerView.Adapter<FeedsGridAdapter.ViewHolder>() {
 
@@ -20,7 +21,8 @@ class FeedsGridAdapter(var context: Context, private var feedList: ArrayList<Fee
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val feed = feedList[position]
 
-        holder.tv_likes.text = String.format(context.getString(R.string.likes), feed.likes)
+        holder.tv_likes.text = String.format(feed.likes.toString())
+        Xdownloader.loadImage(context).load(holder.iv_preview, feed.urls.thumb)
     }
 
     override fun getItemCount(): Int {
