@@ -1,6 +1,9 @@
 package com.android.downloadanything.view.fragment
 
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 
 import com.android.downloadanything.R
 import com.android.downloadanything.model.Category
@@ -63,6 +67,11 @@ class ImagePreviewFragment : Fragment() {
                 tv_categories.text = String.format(getString(R.string.genres), categoryStr.toString())
 
                 iv_download.setOnClickListener {
+                    if(!hasRequiredPermissions()) {
+                        askPermissions()
+                        return@setOnClickListener
+                    }
+
                     Xdownloader.downloadFile(context!!)
                         .setFileName("$name-${System.currentTimeMillis()}")
                         .setOnDownloadResultListener(object : FileLoader.OnDownloadResultListener {
@@ -84,6 +93,17 @@ class ImagePreviewFragment : Fragment() {
             }
             catch (e:Exception){e.printStackTrace()}
         }
+    }
+
+    fun askPermissions(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+        }
+    }
+
+    fun hasRequiredPermissions(): Boolean{
+        return ContextCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(context!!, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 
 }

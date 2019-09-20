@@ -1,28 +1,21 @@
 package com.android.downloadanything.view.activity
 
-import android.Manifest
+import android.app.Dialog
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import com.android.downloadanything.R
 import com.android.downloadanything.model.Feed
 import com.android.downloadanything.model.User
-import com.android.downloadanything.repository.retUtils.RetUtils
+import com.android.downloadanything.utils.Methods
 import com.android.downloadanything.view.adapter.FeedsAdapter
 import com.android.downloadanything.view.fragment.ImagePreviewFragment
 import com.android.downloadanything.viewmodel.FeedsActivityViewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class FeedsActivity : AppCompatActivity(), FeedsAdapter.OnItemClickListener {
     val tag = "ttt FeedsActivity"
@@ -30,6 +23,7 @@ class FeedsActivity : AppCompatActivity(), FeedsAdapter.OnItemClickListener {
     lateinit var adapter: FeedsAdapter
     lateinit var rv_list: RecyclerView
     lateinit var feedsActivityViewModel: FeedsActivityViewModel
+    private lateinit var loader: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +33,7 @@ class FeedsActivity : AppCompatActivity(), FeedsAdapter.OnItemClickListener {
     }
 
     private fun init(){
+        loader = Methods.getProgressLoader(this@FeedsActivity)
         rv_list = findViewById(R.id.rv_list)
 
         initViewModel()
@@ -51,26 +46,17 @@ class FeedsActivity : AppCompatActivity(), FeedsAdapter.OnItemClickListener {
     private fun initViewModel(){
         feedsActivityViewModel = ViewModelProviders.of(this).get(FeedsActivityViewModel::class.java)
         feedsActivityViewModel.init()
+        loader.show()
         feedsActivityViewModel.getFeeds()?.observe(this, Observer<ArrayList<Feed>> {
+            if(loader.isShowing) loader.dismiss()
             if(it != null)
                 adapter.setListData(it)
             adapter.notifyDataSetChanged()
         })
     }
 
-    fun askPermissions(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
-        }
-    }
-
-    fun hasRequiredPermissions(): Boolean{
-        return ContextCompat.checkSelfPermission(baseContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(baseContext, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-    }
-
     override fun onItemClicked(position: Int) {
-        val feed = feedsActivityViewModel.getFeeds()?.value!![position]
+        val feed = adapter.feedList[position]
 
         val imagePreviewFragment = ImagePreviewFragment()
         val bundle = Bundle()
