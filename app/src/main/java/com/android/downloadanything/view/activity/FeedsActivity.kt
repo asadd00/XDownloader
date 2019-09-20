@@ -27,7 +27,6 @@ import retrofit2.Response
 class FeedsActivity : AppCompatActivity(), FeedsAdapter.OnItemClickListener {
     val tag = "ttt FeedsActivity"
 
-    lateinit var feedList: ArrayList<Feed>
     lateinit var adapter: FeedsAdapter
     lateinit var rv_list: RecyclerView
     lateinit var feedsActivityViewModel: FeedsActivityViewModel
@@ -40,24 +39,21 @@ class FeedsActivity : AppCompatActivity(), FeedsAdapter.OnItemClickListener {
     }
 
     private fun init(){
-        feedList = ArrayList()
         rv_list = findViewById(R.id.rv_list)
 
         initViewModel()
 
-        adapter = FeedsAdapter(this@FeedsActivity, feedsActivityViewModel.getFeeds().value!!)
+        adapter = FeedsAdapter(this@FeedsActivity, ArrayList<Feed>())
         adapter.onItemClickListener = this@FeedsActivity
         rv_list.adapter = adapter
-
-        feedsActivityViewModel.getFeedsFromRepo()
-        //makeGetDataRequest()
     }
 
     private fun initViewModel(){
         feedsActivityViewModel = ViewModelProviders.of(this).get(FeedsActivityViewModel::class.java)
         feedsActivityViewModel.init()
-        feedsActivityViewModel.getFeeds().observe(this, Observer<ArrayList<Feed>> {
-            Log.d(tag, "onChanged")
+        feedsActivityViewModel.getFeeds()?.observe(this, Observer<ArrayList<Feed>> {
+            if(it != null)
+                adapter.setListData(it)
             adapter.notifyDataSetChanged()
         })
     }
@@ -74,7 +70,7 @@ class FeedsActivity : AppCompatActivity(), FeedsAdapter.OnItemClickListener {
     }
 
     override fun onItemClicked(position: Int) {
-        val feed = feedsActivityViewModel.getFeeds().value!![position]
+        val feed = feedsActivityViewModel.getFeeds()?.value!![position]
 
         val imagePreviewFragment = ImagePreviewFragment()
         val bundle = Bundle()
@@ -95,28 +91,8 @@ class FeedsActivity : AppCompatActivity(), FeedsAdapter.OnItemClickListener {
 
     override fun onUserImageClicked(position: Int) {
         val intent = Intent(baseContext, UserProfileActivity::class.java)
-        intent.putExtra(User::class.java.simpleName, feedList[position].user)
+        intent.putExtra(User::class.java.simpleName, adapter.feedList[position].user)
         startActivity(intent)
-    }
-
-    private fun makeGetDataRequest(){
-        val retApi = RetUtils.getAPIService()
-        retApi.getRawData().enqueue(object: Callback<ArrayList<Feed>>{
-            override fun onFailure(call: Call<ArrayList<Feed>>, t: Throwable)
-            {
-                Log.d(tag, "error!")
-            }
-
-            override fun onResponse(call: Call<ArrayList<Feed>>, response: Response<ArrayList<Feed>>)
-            {
-                if(response.isSuccessful){
-                    feedList.addAll(response.body() as Collection<Feed>)
-                    Log.d(tag, "len: ${feedList.size}")
-                    adapter.setListData(feedList)
-                }
-            }
-
-        })
     }
 
     override fun onBackPressed() {

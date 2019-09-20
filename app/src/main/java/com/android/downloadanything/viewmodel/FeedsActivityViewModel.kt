@@ -5,27 +5,25 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.android.downloadanything.model.Feed
-import com.android.downloadanything.repository.FeedsRepo
+import com.android.downloadanything.repository.FeedsRepository
 
 class FeedsActivityViewModel: ViewModel() {
     private val tag = "ttt FeedsActivityViewM"
-    private lateinit var mFeedList: MutableLiveData<ArrayList<Feed>>
-    private lateinit var feedsRepo: FeedsRepo
+    var mFeedList: MutableLiveData<ArrayList<Feed>>? = null
+            private set
+
+    private lateinit var feedsRepo: FeedsRepository
 
     fun init(){
-        feedsRepo = FeedsRepo()
+        if(mFeedList != null) return
+
+        feedsRepo = FeedsRepository()
         mFeedList = MutableLiveData()
-        val feedList = ArrayList<Feed>()
-        mFeedList.value = feedList
     }
 
-    fun getFeeds(): LiveData<ArrayList<Feed>>{
+    fun getFeeds(): LiveData<ArrayList<Feed>>?{
+        mFeedList = feedsRepo.getFeeds()
         return mFeedList
-    }
-
-    fun getFeedsFromRepo(){
-        Log.v(tag, "getFeedsFromRepo")
-        mFeedList.value = feedsRepo.getFeeds()
     }
     
 }

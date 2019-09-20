@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class RetClient {
     companion object{
-        var retrofit: Retrofit? = null
+        private var retrofit: Retrofit? = null
 
         fun getClient(): Retrofit {
             if (retrofit == null) {

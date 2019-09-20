@@ -13,7 +13,7 @@ import com.android.downloadanything.R
 import com.android.downloadanything.model.Feed
 import com.android.main.Xdownloader
 
-class FeedsAdapter(var context: Activity, private var feedList: ArrayList<Feed>): RecyclerView.Adapter<FeedsAdapter.ViewHolder>() {
+class FeedsAdapter(var context: Activity, var feedList: ArrayList<Feed>): RecyclerView.Adapter<FeedsAdapter.ViewHolder>() {
 
     lateinit var onItemClickListener: OnItemClickListener
 
@@ -39,7 +39,7 @@ class FeedsAdapter(var context: Activity, private var feedList: ArrayList<Feed>)
     }
 
     fun setListData(feedList: ArrayList<Feed>){
-        this.feedList = feedList
+        this.feedList.addAll(feedList)
         notifyDataSetChanged()
     }
 
