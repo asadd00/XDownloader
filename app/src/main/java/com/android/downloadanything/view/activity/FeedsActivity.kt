@@ -10,14 +10,16 @@ import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import com.android.downloadanything.R
 import com.android.downloadanything.model.Feed
 import com.android.downloadanything.model.User
-import com.android.downloadanything.repository.RetUtils
+import com.android.downloadanything.repository.retUtils.RetUtils
 import com.android.downloadanything.view.adapter.FeedsAdapter
 import com.android.downloadanything.view.fragment.ImagePreviewFragment
+import com.android.downloadanything.viewmodel.FeedsActivityViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,6 +30,7 @@ class FeedsActivity : AppCompatActivity(), FeedsAdapter.OnItemClickListener {
     lateinit var feedList: ArrayList<Feed>
     lateinit var adapter: FeedsAdapter
     lateinit var rv_list: RecyclerView
+    lateinit var feedsActivityViewModel: FeedsActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,15 +39,27 @@ class FeedsActivity : AppCompatActivity(), FeedsAdapter.OnItemClickListener {
         init()
     }
 
-    fun init(){
+    private fun init(){
         feedList = ArrayList()
-
         rv_list = findViewById(R.id.rv_list)
-        adapter = FeedsAdapter(this@FeedsActivity, feedList)
+
+        initViewModel()
+
+        adapter = FeedsAdapter(this@FeedsActivity, feedsActivityViewModel.getFeeds().value!!)
         adapter.onItemClickListener = this@FeedsActivity
         rv_list.adapter = adapter
 
-        makeGetDataRequest()
+        feedsActivityViewModel.getFeedsFromRepo()
+        //makeGetDataRequest()
+    }
+
+    private fun initViewModel(){
+        feedsActivityViewModel = ViewModelProviders.of(this).get(FeedsActivityViewModel::class.java)
+        feedsActivityViewModel.init()
+        feedsActivityViewModel.getFeeds().observe(this, Observer<ArrayList<Feed>> {
+            Log.d(tag, "onChanged")
+            adapter.notifyDataSetChanged()
+        })
     }
 
     fun askPermissions(){
@@ -59,7 +74,7 @@ class FeedsActivity : AppCompatActivity(), FeedsAdapter.OnItemClickListener {
     }
 
     override fun onItemClicked(position: Int) {
-        val feed = feedList[position]
+        val feed = feedsActivityViewModel.getFeeds().value!![position]
 
         val imagePreviewFragment = ImagePreviewFragment()
         val bundle = Bundle()

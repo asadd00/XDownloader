@@ -1,4 +1,4 @@
-package com.android.downloadanything.repository
+package com.android.downloadanything.repository.retUtils
 
 import com.android.downloadanything.model.Feed
 import com.android.downloadanything.utils.Defaults
