@@ -1,8 +1,13 @@
 package com.android.utils
 
+import android.app.Notification
+import android.app.NotificationManager
 import android.content.Context
+import android.os.Build
 import android.os.Process
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import com.android.downloadx.R
 import com.android.lib.FileLoader
 import com.android.model.FileTypes
 import com.android.model.FileModel
@@ -12,9 +17,13 @@ import java.net.URL
 import java.util.concurrent.ThreadFactory
 
 
-object FileLoaderUtility {
+class FileLoaderUtility(val context: Context) {
     private val tag = "ttt FileLoaderUtility"
+    private var isNoteEnabled = false
+    private var channelId = ""
     private var onDownloadResultListener: FileLoader.OnDownloadResultListener? = null
+    private var noteBuilder: Notification.Builder? = null
+    private var notificationManager: NotificationManager? = null
 
     internal class FileThreadFactory : ThreadFactory {
         override fun newThread(runnable: Runnable): Thread {
@@ -25,13 +34,21 @@ object FileLoaderUtility {
         }
     }
 
-    fun downloadFileFromURL(context: Context, fileModel: FileModel,
+    fun downloadFileFromURL(fileModel: FileModel, channelId: String,
+                            onDownloadResultListener: FileLoader.OnDownloadResultListener?): String? {
+        this.channelId = channelId
+        isNoteEnabled = true
+        notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        return downloadFileFromURL(fileModel, onDownloadResultListener)
+    }
+
+    fun downloadFileFromURL(fileModel: FileModel,
                             onDownloadResultListener: FileLoader.OnDownloadResultListener?): String? {
         this.onDownloadResultListener = onDownloadResultListener
         val url = URL(fileModel.fileUrl)
         val urlConnection: HttpURLConnection = url.openConnection() as HttpURLConnection
         val responseCode = urlConnection.responseCode
-        Log.d(tag, "responseCode: $responseCode")
         if(onDownloadResultListener!= null && (responseCode < 200 || responseCode >= 300)){
             onDownloadResultListener.onError("Connection error!", responseCode)
             return ""
@@ -39,10 +56,10 @@ object FileLoaderUtility {
 
         val inputStream = BufferedInputStream(urlConnection.inputStream)
 
-        return saveFile(context, inputStream, fileModel)
+        return saveFile(inputStream, fileModel)
     }
 
-    fun saveFile(context: Context, file: File, fileModel: FileModel,
+    fun saveFile(file: File, fileModel: FileModel,
                  onDownloadResultListener: FileLoader.OnDownloadResultListener?): String{
 
         Log.d(tag, "path: " + context.getExternalFilesDir(null)?.path)
@@ -81,7 +98,7 @@ object FileLoaderUtility {
         return file.absolutePath
     }
 
-    fun saveFile(context: Context, inputStream: BufferedInputStream, fileModel: FileModel): String{
+    fun saveFile(inputStream: BufferedInputStream, fileModel: FileModel): String{
         var ext = ".file"
 
         when {
@@ -97,6 +114,11 @@ object FileLoaderUtility {
         filetosave.parentFile.createNewFile()
         filetosave.createNewFile()
 
+        if(isNoteEnabled){
+            noteBuilder = buildNote()
+            notificationManager?.notify(0, noteBuilder?.build())
+        }
+
         try {
             FileOutputStream(filetosave).use { output ->
                 val buffer = ByteArray(4 * 1024)
@@ -110,11 +132,27 @@ object FileLoaderUtility {
 
                 output.flush()
                 onDownloadResultListener?.onSuccess(filetosave.path)
+                if(isNoteEnabled) notificationManager?.cancel(0)
             }
         } finally {
             inputStream.close()
         }
 
         return filetosave.absolutePath
+    }
+
+    fun buildNote(): Notification.Builder{
+        val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Notification.Builder(context, channelId)
+        } else {
+            Notification.Builder(context)
+        }
+
+        builder.setContentTitle(context.getString(R.string.note_title))
+        builder.setAutoCancel(false)
+        builder.setSmallIcon(android.R.drawable.stat_sys_download)
+        builder.setOngoing(true)
+
+        return builder
     }
 }

@@ -74,6 +74,7 @@ class ImagePreviewFragment : Fragment() {
 
                     Xdownloader.downloadFile(context!!)
                         .setFileName("$name-${System.currentTimeMillis()}")
+                        .setNotificationEnabled(true, getString(R.string.app_name))
                         .setOnDownloadResultListener(object : FileLoader.OnDownloadResultListener {
                             override fun onSuccess(filePath: String) {
                                 activity?.runOnUiThread{

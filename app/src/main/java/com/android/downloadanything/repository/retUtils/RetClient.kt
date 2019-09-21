@@ -15,7 +15,7 @@ class RetClient {
         fun getClient(): Retrofit {
             if (retrofit == null) {
                 retrofit = Retrofit.Builder()
-                    .baseUrl(Defaults.BASE_URL)
+                    .baseUrl(Defaults.Urls.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     //.client(buildLoggingClient())
                     .build()

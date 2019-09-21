@@ -7,6 +7,6 @@ import retrofit2.http.GET
 
 
 interface RetAPI {
-    @GET(Defaults.GET_RAW_DATA)
+    @GET(Defaults.Urls.GET_RAW_DATA)
     fun getRawData(): Call<ArrayList<Feed>>
 }
