@@ -8,8 +8,6 @@ This is the [Sample Project](https://github.com/asad-ab/DownloadAnything/tree/ma
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
 ### Installing
 
 Add this project as modular dependency in your android application.
