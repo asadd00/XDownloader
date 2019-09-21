@@ -54,4 +54,4 @@ Add additional notes about how to deploy this on a live system
 
 ## Authors
 
-* **Muhammad Asadullah** - *Whole work* - [PurpleBooth](https://github.com/asad-ab)
+* **Muhammad Asadullah** - *Whole work*
