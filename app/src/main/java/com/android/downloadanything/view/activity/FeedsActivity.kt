@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -23,7 +24,7 @@ import com.android.downloadanything.view.fragment.FeedsGridViewFragment
 import com.android.downloadanything.view.fragment.ImagePreviewFragment
 import com.android.downloadanything.viewmodel.FeedsActivityViewModel
 
-class FeedsActivity : AppCompatActivity(), FeedsAdapter.OnItemClickListener {
+class FeedsActivity : AppCompatActivity(), FeedsAdapter.OnItemClickListener, FeedsAdapter.OnLoadMoreListener {
     val tag = "ttt FeedsActivity"
 
     lateinit var adapter: FeedsAdapter
@@ -60,16 +61,21 @@ class FeedsActivity : AppCompatActivity(), FeedsAdapter.OnItemClickListener {
 
         initViewModel()
 
-        adapter = FeedsAdapter(this@FeedsActivity, ArrayList<Feed>())
+        adapter = FeedsAdapter(this@FeedsActivity, ArrayList(), rv_list)
         adapter.onItemClickListener = this@FeedsActivity
+        adapter.onLoadMoreListener = this@FeedsActivity
         rv_list.adapter = adapter
+
+        loader.show()
+        feedsActivityViewModel.getMoreFeeds()
     }
 
     private fun initViewModel(){
         feedsActivityViewModel = ViewModelProviders.of(this).get(FeedsActivityViewModel::class.java)
         feedsActivityViewModel.init()
-        loader.show()
+        //loader.show()
         feedsActivityViewModel.getFeeds()?.observe(this, Observer<ArrayList<Feed>> {
+            adapter.setLoaded()
             if(loader.isShowing) loader.dismiss()
             if(it != null)
                 adapter.setListData(it)
@@ -115,6 +121,11 @@ class FeedsActivity : AppCompatActivity(), FeedsAdapter.OnItemClickListener {
         val intent = Intent(baseContext, UserProfileActivity::class.java)
         intent.putExtra(User::class.java.simpleName, adapter.feedList[position].user)
         startActivity(intent)
+    }
+
+    override fun onLoadMore() {
+        loader.show()
+        feedsActivityViewModel.getMoreFeeds()
     }
 
     override fun onBackPressed() {

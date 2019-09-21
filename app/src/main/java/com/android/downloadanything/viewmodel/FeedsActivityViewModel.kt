@@ -18,12 +18,24 @@ class FeedsActivityViewModel: ViewModel() {
         if(mFeedList != null) return
 
         feedsRepo = FeedsRepository()
-        mFeedList = MutableLiveData()
+        mFeedList = feedsRepo.getLiveDataInstance()
     }
 
     fun getFeeds(): LiveData<ArrayList<Feed>>?{
-        mFeedList = feedsRepo.getFeeds()
+        //mFeedList = feedsRepo.getFeeds()
         return mFeedList
     }
-    
+
+
+    /**
+     * dummy for pagination testing
+     * data should be called from repository
+     */
+    fun getMoreFeeds(){
+//        val list = mFeedList?.value
+//        mFeedList?.value = list
+        mFeedList = feedsRepo.getFeeds()
+    }
+
+
 }

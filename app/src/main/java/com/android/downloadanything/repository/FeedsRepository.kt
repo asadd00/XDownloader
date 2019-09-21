@@ -10,20 +10,21 @@ import retrofit2.Response
 
 class FeedsRepository {
     private val tag = "ttt FeedsRepository"
+    var feedList: MutableLiveData<ArrayList<Feed>> = MutableLiveData()
+
+    fun getLiveDataInstance(): MutableLiveData<ArrayList<Feed>>{
+        return feedList
+    }
 
     fun getFeeds(): MutableLiveData<ArrayList<Feed>>{
-        val feedList: MutableLiveData<ArrayList<Feed>> = MutableLiveData()
         RetUtils.getAPIService().getRawData().enqueue(object : Callback<ArrayList<Feed>> {
             override fun onFailure(call: Call<ArrayList<Feed>>, t: Throwable) {
-                Log.d(tag, "failure")
                 feedList.value = null
             }
 
             override fun onResponse(call: Call<ArrayList<Feed>>, response: Response<ArrayList<Feed>>) {
                 if(response.isSuccessful && response.body() != null){
                     feedList.value = response.body()
-                    Log.d(tag, "len: ${feedList.value?.size}")
-
                 }
             }
         })

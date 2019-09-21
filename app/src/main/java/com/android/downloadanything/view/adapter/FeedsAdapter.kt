@@ -12,10 +12,24 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.downloadanything.R
 import com.android.downloadanything.model.Feed
 import com.android.main.Xdownloader
+import androidx.recyclerview.widget.LinearLayoutManager
 
-class FeedsAdapter(var context: Activity, var feedList: ArrayList<Feed>): RecyclerView.Adapter<FeedsAdapter.ViewHolder>() {
+
+
+
+class FeedsAdapter(var context: Activity, var feedList: ArrayList<Feed>, private val recyclerView: RecyclerView): RecyclerView.Adapter<FeedsAdapter.ViewHolder>() {
 
     lateinit var onItemClickListener: OnItemClickListener
+    lateinit var onLoadMoreListener: OnLoadMoreListener
+    private val visibleThreshold = 10
+    private var visibleItemCount = 0
+    private var firstVisibleItemPosition: Int = 0
+    private var totalItemCount: Int = 0
+    private var loading: Boolean = false
+
+    init {
+        initLoadmoreThings()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_feed, parent, false)
@@ -68,9 +82,38 @@ class FeedsAdapter(var context: Activity, var feedList: ArrayList<Feed>): Recycl
 
     }
 
+    fun setLoaded(){loading = false}
+
+    private fun initLoadmoreThings(){
+        if (recyclerView.layoutManager is LinearLayoutManager) {
+            val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager
+            recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    visibleItemCount = linearLayoutManager.childCount
+                    totalItemCount = linearLayoutManager.itemCount
+                    firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition()
+
+                    if (!loading && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                            && firstVisibleItemPosition >= 0
+                            && totalItemCount >= visibleThreshold) {
+                        // End has been reached
+                        // Do something
+                        onLoadMoreListener.onLoadMore()
+                        loading = true
+                    }
+                }
+            })
+        }
+    }
+
     interface OnItemClickListener{
         fun onItemClicked(position: Int)
         fun onUserImageClicked(position: Int)
+    }
+
+    interface OnLoadMoreListener{
+        fun onLoadMore()
     }
 
 }
