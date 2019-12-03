@@ -1,4 +1,6 @@
 # XDownloader
+[![](https://jitpack.io/v/asadd00/XDownloader.svg)](https://jitpack.io/#asadd00/XDownloader)
+
 
 XDownloader is modular library for android apps to provide ease in downloading files or loading images in ImageView. XDownloader can be customizable with various methods.
 
@@ -11,6 +13,24 @@ This is the [Sample Project](https://github.com/asad-ab/DownloadAnything/tree/ma
 ### Installing
 
 Add this project as modular dependency in your android application.
+
+**OR**
+
+Add it in your root build.gradle at the end of repositories:
+```
+allprojects {
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
+	}
+}
+```
+Add the dependency
+```
+dependencies {
+	implementation 'com.github.asadd00:XDownloader:1.0'
+}
+```
 
 ## Usage
 
