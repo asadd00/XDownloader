@@ -64,10 +64,6 @@ Xdownloader
 	.download(url, fileType)
 ```
 
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
 ## Built With
 
 * [Kotlin](http://kotlinlang.org) - Android offical language
